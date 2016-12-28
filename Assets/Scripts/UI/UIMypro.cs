@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using System.IO;
 
 public class UIMypro : TTUIPage {
 
@@ -12,16 +13,16 @@ public class UIMypro : TTUIPage {
     }
 	public Dictionary<int,Object> templist = new Dictionary<int,Object>();
 	List<GameObject> itemps_Pool = new List<GameObject> ();
-	GameObject solutionpanle,ChoiseStylePanel,itemes;
+    GameObject solutionpanle, ChoiseStylePanel, itemes, ProShowPanel, UpPanel, DownPanel;
 	Button ProductButton,MyStyelButton,MyTexButton,RealenvButton,BackHomeButton
-	,AllButton,ChinaButton,EuropButton,NaturalButton,TownButton,KawayiButton;
+    , AllButton, ChinaButton, EuropButton, NaturalButton, TownButton, KawayiButton, RebackButton;
      public override void Awake(GameObject go) 
      {
-		FindChildAsinge ();
+         FindChildInit();
 		itemes.SetActive (false);
 		BackHomeButton.onClick.AddListener(BackHome);
 		ProductButton.onClick.AddListener (delegate() {
-			RefreshItems(new List<GameObject>());
+			RefreshItems(Test());
 		});
 		MyStyelButton.onClick.AddListener (delegate() {
 			RefreshItems(new List<GameObject>());
@@ -32,15 +33,30 @@ public class UIMypro : TTUIPage {
 		RealenvButton.onClick.AddListener (delegate() {
 			RefreshItems(new List<GameObject>());
 		});
+        RebackButton.onClick.AddListener(Reback);
+     }
+    /// <summary>
+    /// 测试
+    /// </summary>
+     List<GameObject> Test() 
+     {
+         GameObject a = new GameObject();
+         List<GameObject> templist = new List<GameObject>();
+         templist.Add(a);
+         templist.Add(a);
+         templist.Add(a);
+         return templist;
      }
 
-
-	void FindChildAsinge()
+	void FindChildInit()
 	{
-
-		itemes = transform.FindChild ("UpPanel/Scroll View/Viewport/Content/Image").gameObject;
-		solutionpanle = transform.FindChild ("DownPanel/SolutionPanel").gameObject;
-		ChoiseStylePanel =transform.FindChild ("DownPanel/ChoiseStylePanel").gameObject;
+        ProShowPanel = transform.FindChild("ProShowPanel").gameObject;
+        RebackButton = ProShowPanel.transform.FindChild("RebackButton").GetComponent<Button>();
+        UpPanel = transform.FindChild("UpPanel").gameObject;
+        DownPanel = transform.FindChild("DownPanel").gameObject;
+        itemes = UpPanel.transform.FindChild("Scroll View/Viewport/Content/Image").gameObject;
+        solutionpanle = DownPanel.transform.FindChild("SolutionPanel").gameObject;
+        ChoiseStylePanel = DownPanel.transform.FindChild("ChoiseStylePanel").gameObject;
 		ProductButton = solutionpanle.transform.FindChild ("ProductButton").GetComponent<Button>();
 		MyStyelButton = solutionpanle.transform.FindChild ("MyStyelButton").GetComponent<Button>();
 		MyTexButton = solutionpanle.transform.FindChild ("MyTexButton").GetComponent<Button>();
@@ -52,7 +68,7 @@ public class UIMypro : TTUIPage {
 		NaturalButton = ChoiseStylePanel.transform.FindChild ("NaturalButton").GetComponent<Button> ();
 		TownButton = ChoiseStylePanel.transform.FindChild ("TownButton").GetComponent<Button> ();
 		KawayiButton = ChoiseStylePanel.transform.FindChild ("KawayiButton").GetComponent<Button> ();
-
+        itemes.SetActive(false);
 	}
      void BackHome() 
      {
@@ -82,12 +98,16 @@ public class UIMypro : TTUIPage {
 			else 
 			{
 				item = GameObject.Instantiate (itemes) as GameObject;
+                item.tag = "ImageShow";
+                item.AddComponent<Button>().onClick.AddListener(ShowSingle);
 			}
 			item.SetActive (true);
 			reuseitems.Add (item);
+            item.GetComponent<Image>().overrideSprite = Resources.Load("modle", typeof(Sprite)) as Sprite;
 			item.transform.SetParent (itemes.transform.parent);
 			item.transform.localScale = Vector3.one;
 			item.transform.localPosition = Vector3.zero;
+           
 		}
 		for (int i = 0; i < reuseitems.Count; i++) 
 		{
@@ -99,4 +119,22 @@ public class UIMypro : TTUIPage {
 	{
 	//	Debug.Log ("调用Refresh");
 	}
+
+    void ShowSingle() 
+    {
+       // if (UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.CompareTag("ImageShow"))
+       
+            //跳转并关闭当前
+        UpPanel.SetActive(false);
+        DownPanel.SetActive(false);
+        ProShowPanel.SetActive(true);
+       
+    }
+
+    void Reback() 
+    {
+        UpPanel.SetActive(true);
+        DownPanel.SetActive(true);
+        ProShowPanel.SetActive(false);
+    }
 }

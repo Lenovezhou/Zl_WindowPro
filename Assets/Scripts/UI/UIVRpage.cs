@@ -3,6 +3,8 @@ using System.Collections;
 using UnityEngine.UI;
 using System.Collections.Generic;
 
+public delegate void togglecall(bool ison);
+
 public class UIVRpage : TTUIPage {
 
 	public UIVRpage() : base(UIType.Normal, UIMode.HideOther, UICollider.None)
@@ -12,9 +14,12 @@ public class UIVRpage : TTUIPage {
 	List<GameObject> reuseitems = new List<GameObject>();
 	List<GameObject> itemps_Pool = new List<GameObject> ();
 
-     Toggle HoleToggle, BodyToggle, windmToggle, WindshaToggle, HouseMapToggle, UploadToggle;
-     Button  BackHomeButton;
-	GameObject itemes,changestylepanel;
+    togglecall call;
+    Text leftname,replacename;
+    Toggle HoleToggle, BodyToggle, windmToggle, WindshaToggle, HouseMapToggle, UploadToggle, aspecktToggle, GroundToggle, WallToggle
+      , BedroomToggle, LivingroomToggle, EditwindToggle, EditEnviromentToggle;
+    Button BackHomeButton;
+    GameObject itemes, changestylepanel, VRUploadPage, VRHouseMap, EditWindPanel, EditEnviroPanel, EditPanel, VRChangeStyel;
      public override void Awake(GameObject go) 
      {
 		FindInit ();
@@ -24,27 +29,75 @@ public class UIVRpage : TTUIPage {
          WindshaToggle.onValueChanged.AddListener(ChangStyel);
          HouseMapToggle.onValueChanged.AddListener(HouseMap);
          UploadToggle.onValueChanged.AddListener(Upload);
+         BedroomToggle.onValueChanged.AddListener(ToBedroom);
+         LivingroomToggle.onValueChanged.AddListener(ToLivingroom);
+         GroundToggle.onValueChanged.AddListener(LivingroomChangeStyel);
+         WallToggle.onValueChanged.AddListener(LivingroomChangeStyel);
+         EditwindToggle.onValueChanged.AddListener(EditFlywindows);
+         EditEnviromentToggle.onValueChanged.AddListener(EditEnvir);
      }
 
 	void FindInit()
 	{
+        VRChangeStyel = transform.FindChild("VRChangeStyel").gameObject;
+        EditPanel = transform.FindChild("EditPanel").gameObject;
+        VRUploadPage = transform.FindChild("VRUploadPage").gameObject;
+        VRHouseMap = transform.FindChild("VRHouseMap").gameObject;
+        leftname = VRChangeStyel.transform.FindChild("ChangeName").GetComponent<Text>();
+        replacename = VRChangeStyel.transform.FindChild("NameText").GetComponent<Text>();
+        BedroomToggle = VRHouseMap.transform.FindChild("BedroomToggle").GetComponent<Toggle>();
+        LivingroomToggle = VRHouseMap.transform.FindChild("LivingroomToggle").GetComponent<Toggle>();
 		changestylepanel = transform.FindChild ("VRChangeStyel").gameObject;
 		itemes = changestylepanel.transform.FindChild ("Scroll View/Viewport/Content/ChoiseHouseItem").gameObject;
 		BackHomeButton = transform.FindChild("BackHomeButton").GetComponent<Button>();
 		BackHomeButton.onClick.AddListener(BackHome);
+        EditwindToggle = EditPanel.transform.FindChild("EditwindToggle").GetComponent<Toggle>();
+        EditEnviromentToggle = EditPanel.transform.FindChild("EditEnviromentToggle").GetComponent<Toggle>();
 		HouseMapToggle = transform.FindChild("HouseMapToggle").GetComponent<Toggle>();
-		HoleToggle = transform.FindChild("HoleToggle").GetComponent<Toggle>();
-		BodyToggle = transform.FindChild("BodyToggle").GetComponent<Toggle>();
-		windmToggle = transform.FindChild("windmToggle").GetComponent<Toggle>();
-		WindshaToggle= transform.FindChild("WindshaToggle").GetComponent<Toggle>();
+        EditWindPanel = transform.FindChild("EditWindPanel").gameObject;
+        EditEnviroPanel = transform.FindChild("EditEnviroPanel").gameObject;
+        GroundToggle = EditWindPanel.transform.FindChild("GroundToggle").GetComponent<Toggle>();
+        WallToggle = EditWindPanel.transform.FindChild("WallToggle").GetComponent<Toggle>();
+        HoleToggle = EditEnviroPanel.transform.FindChild("HoleToggle").GetComponent<Toggle>();
+        BodyToggle = EditEnviroPanel.transform.FindChild("BodyToggle").GetComponent<Toggle>();
+        windmToggle = EditEnviroPanel.transform.FindChild("windmToggle").GetComponent<Toggle>();
+        WindshaToggle = EditEnviroPanel.transform.FindChild("WindshaToggle").GetComponent<Toggle>();
+        aspecktToggle = transform.FindChild("aspecktToggle").GetComponent<Toggle>();
 		UploadToggle = transform.FindChild("UploadToggle").GetComponent<Toggle>();
 		HoleToggle.isOn = false;
 		BodyToggle.isOn = false;
 		windmToggle.isOn = false;
 		WindshaToggle.isOn = false;
 		changestylepanel.SetActive (false);
+        GroundToggle.isOn = false;
+        WallToggle.isOn = false;
+        BedroomToggle.isOn = true;
+        LivingroomToggle.isOn = false;
+        EditEnviromentToggle.isOn = false;
+        EditwindToggle.isOn = true;
 	}
 
+    void ToBedroom(bool ison) 
+    {
+     //   LivingroomPanel.SetActive(!ison);
+    }
+
+    void EditFlywindows(bool ison) 
+    {
+        EditWindPanel.SetActive(ison);
+        EditEnviroPanel.SetActive(!ison);
+    }
+
+    void EditEnvir(bool ison) 
+    {
+        EditEnviroPanel.SetActive(ison);
+        EditWindPanel.SetActive(!ison);
+    }
+
+    void ToLivingroom(bool ison) 
+    {
+   //     BedroomPanel.SetActive(!ison);
+    }
     /// <summary>
     /// 返回到主页
     /// </summary>
@@ -54,7 +107,7 @@ public class UIVRpage : TTUIPage {
      }
 	void RefreshItems(List<GameObject> templist)
 	{
-		Debug.Log ("<color=yellow>对啦"+templist.Count+"</color>");
+        //Debug.Log ("<color=yellow>对啦"+templist.Count+"</color>");
 		reuseitems.Clear ();
 		for (int i = 0; i < itemps_Pool.Count; i++)
 		{
@@ -92,12 +145,13 @@ public class UIVRpage : TTUIPage {
     /// </summary>
      void Upload( bool ison) 
      {
-         if (ison)
+         if (!VRUploadPage.activeSelf)
          {
-             ShowPage<UIVRUploadPage>();
+             VRUploadPage.SetActive(true);
+             VRHouseMap.SetActive(false);
          }
          else {
-             ClosePage<UIVRUploadPage>();
+             VRUploadPage.SetActive(false);
          }
      }
 
@@ -106,27 +160,39 @@ public class UIVRpage : TTUIPage {
     /// </summary>
      void HouseMap( bool ison) 
      {
-         if (ison)
+         if (!VRHouseMap.activeSelf)
          {
-             ShowPage<UIVRHouseMap>();
+             VRHouseMap.SetActive(true);
+             VRUploadPage.SetActive(false);
          }
-         else 
-         {
-             ClosePage<UIVRHouseMap>();
+         else {
+             VRHouseMap.SetActive(false);
          }
-     }
 
+     }
+    
     /// <summary>
     /// 打开切换款式
     /// </summary>
      void ChangStyel(bool ison) 
      {
-         Debug.Log("ison"+ison);
+         //Debug.Log("ison"+ison);
 		changestylepanel.SetActive (ison);
 		if (ison) 
 		{
-			RefreshItems (new List<GameObject> ());	
-		}
+           leftname.text = UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.GetComponentInChildren<Text>().text;
+           replacename.text = "款式";
+        }
+     }
+
+     void LivingroomChangeStyel(bool ison) 
+     {
+         changestylepanel.SetActive(ison);
+         if (ison)
+         {
+             replacename.text = UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.GetComponentInChildren<Text>().text;
+             leftname.text = "替换";
+         }
      }
    
 

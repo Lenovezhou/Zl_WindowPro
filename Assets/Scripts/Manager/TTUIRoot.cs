@@ -28,15 +28,13 @@
                 return m_Instance;
             }
         }
-        public void load(IEnumerator temp)
-        {
-            StartCoroutine(temp);
-        }
+
         public Transform root;
         public Transform fixedRoot;
         public Transform normalRoot;
         public Transform popupRoot;
         public Camera uiCamera;
+
         static void InitRoot()
         {
             GameObject go = new GameObject("UIRoot");
@@ -44,12 +42,11 @@
             m_Instance = go.AddComponent<TTUIRoot>();
             go.AddComponent<RectTransform>();
             m_Instance.root = go.transform;
-            DontDestroyOnLoad(go);
-            //m_Instance.netWork = new MyNetWork();
+
             Canvas can = go.AddComponent<Canvas>();
             can.renderMode = RenderMode.ScreenSpaceCamera;
             can.pixelPerfect = true;
-
+            
             GameObject camObj = new GameObject("UICamera");
             camObj.layer = LayerMask.NameToLayer("UI");
             camObj.transform.parent = go.transform;
@@ -58,12 +55,13 @@
             Camera cam = camObj.AddComponent<Camera>();
             cam.clearFlags = CameraClearFlags.Depth;
             cam.orthographic = true;
-            cam.farClipPlane = 200f;
-            can.worldCamera = cam;
-            m_Instance.uiCamera = cam;
+            cam.farClipPlane = 200f;                        
             cam.cullingMask = 1<<5;
             cam.nearClipPlane = -50f;
-            cam.farClipPlane = 50f;
+            cam.farClipPlane = 50f;            
+            m_Instance.uiCamera = cam;
+            can.worldCamera = cam;
+            can.transform.localScale = Vector3.one;
 
             //add audio listener
             camObj.AddComponent<AudioListener>();
@@ -111,9 +109,7 @@
             else
             {
                 eventObj.AddComponent<UnityEngine.EventSystems.TouchInputModule>();
-            }
-            //test test = new test();
-            
+            }            
         }
         /// <summary>
         /// 为Root创建子画布
@@ -142,13 +138,9 @@
 
             return go;
         }
-        public void test(string str)
-        {
-            Debug.Log("      2312   "+str);
-        }
+
         void OnDestroy()
         {
             m_Instance = null;
-            //netWork.OnDestroy();
         }
     }

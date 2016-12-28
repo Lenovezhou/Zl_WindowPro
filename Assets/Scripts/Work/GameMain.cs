@@ -10,9 +10,10 @@ public class GameMain : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        //GameObject.FindGameObjectWithTag("MainCamera").SetActive(false);
         TTUIRoot tt= TTUIRoot.Instance;
-        TTUIPage.ShowPage<UIVRpage>();
-//        TTUIPage.ShowPage<UIMypro>();
+        //TTUIPage.ShowPage<UIVRpage>();
+        TTUIPage.ShowPage<UIMypro>();
     }
 
     // Update is called once per frame

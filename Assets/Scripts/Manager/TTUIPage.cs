@@ -108,6 +108,7 @@
         public virtual void Hide()
         {
             this.gameObject.SetActive(false);
+            Debug.Log(this.name+" Hide() ");
             isActived = false;
             //set this page's data null when hide.
             this.m_data = null;
@@ -137,7 +138,6 @@
         protected void Show()
         {
             //1:instance UI
-            //Debug.Log("Show()"+this.uiPath);
             if (this.gameObject == null && string.IsNullOrEmpty(uiPath) == false)
             {
                 GameObject go = null;
@@ -390,7 +390,7 @@
         {
             Type t = typeof(T);
             string pageName = t.ToString();
-            //Debug.Log("ShowUI----------->"+pageName);
+            Debug.Log("ShowUI----------->"+pageName);
             if (m_allPages != null && m_allPages.ContainsKey(pageName))
             {
                 ShowPage(pageName, m_allPages[pageName], callback, pageData, isAsync);
@@ -444,8 +444,6 @@
         /// </summary>
         public static void ShowPage<T>() where T : TTUIPage, new()
         {
-            Type t = typeof(T);
-            string pageName = t.ToString();
             ShowPage<T>(null, null, false);
         }
 
@@ -585,6 +583,7 @@
 
             target.Hide();
         }
+
         public static void ClosePage<T>() where T : TTUIPage
         {
             Type t = typeof(T);
@@ -615,4 +614,3 @@
         #endregion
 
     }//TTUIPage
-    //namespace
