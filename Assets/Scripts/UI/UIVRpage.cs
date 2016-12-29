@@ -15,12 +15,15 @@ public class UIVRpage : TTUIPage {
     }
 	List<GameObject> reuseitems = new List<GameObject>();
 	List<GameObject> itemps_Pool = new List<GameObject> ();
+	List<Toggle> toggles = new List<Toggle> ();
 
+	bool isChangStyelBig = false;
     togglecall call;
     Text leftname,replacename;
+	InputField InputField;
     Toggle HoleToggle, BodyToggle, windmToggle, WindshaToggle, HouseMapToggle, UploadToggle, aspecktToggle, GroundToggle, WallToggle
       , BedroomToggle, LivingroomToggle, EditwindToggle, EditEnviromentToggle;
-    Button BackHomeButton, BackButton;
+    Button BackHomeButton, BackButton,ConfigButton;
     GameObject secenditemes,firstitems ,changestylepanel, VRUploadPage, VRHouseMap, EditWindPanel
         , EditEnviroPanel, EditPanel, VRChangeStyel, EditHousePanel, ChoiseHousePanel, AlivePanel;
      public override void Awake(GameObject go) 
@@ -40,6 +43,18 @@ public class UIVRpage : TTUIPage {
          EditwindToggle.onValueChanged.AddListener(EditFlywindows);
          EditEnviromentToggle.onValueChanged.AddListener(EditEnvir);
          aspecktToggle.onValueChanged.AddListener(RoateSelf);
+		BackHomeButton.onClick.AddListener(BackHome);
+		BackButton.onClick.AddListener(BackHome);
+		ConfigButton.onClick.AddListener (delegate() 
+			{VRUploadPage.transform.DOScale(Vector3.zero,0.2f);
+				UploadToggle.isOn = false;
+			});
+		toggles.Add (HoleToggle);
+		toggles.Add (BodyToggle);
+		toggles.Add (windmToggle);
+		toggles.Add (WindshaToggle);
+		toggles.Add (GroundToggle);
+		toggles.Add (WallToggle);
      }
 
     /// <summary>
@@ -62,10 +77,11 @@ public class UIVRpage : TTUIPage {
         ChoiseHousePanel = transform.FindChild("ChoiseHousePanel").gameObject;
         EditHousePanel = AlivePanel.transform.FindChild("EditHousePanel").gameObject;
         BackButton = ChoiseHousePanel.transform.FindChild("BackButton").GetComponent<Button>();
-        BackButton.onClick.AddListener(BackHome);
         VRChangeStyel = transform.FindChild("VRChangeStyel").gameObject;
         EditPanel = EditHousePanel.transform.FindChild("EditPanel").gameObject;
         VRUploadPage = transform.FindChild("VRUploadPage").gameObject;
+		ConfigButton = VRUploadPage.transform.FindChild ("ConfigButton").GetComponent<Button> ();
+		InputField = VRUploadPage.transform.FindChild ("InputField").GetComponent<InputField> ();
         VRHouseMap = transform.FindChild("VRHouseMap").gameObject;
         leftname = VRChangeStyel.transform.FindChild("ChangeName").GetComponent<Text>();
         replacename = VRChangeStyel.transform.FindChild("NameText").GetComponent<Text>();
@@ -75,7 +91,6 @@ public class UIVRpage : TTUIPage {
 		secenditemes = changestylepanel.transform.FindChild ("Scroll View/Viewport/Content/ChoiseHouseItem").gameObject;
         firstitems = ChoiseHousePanel.transform.FindChild("MainPanel/Scroll View/Viewport/Content/HouseLitItems").gameObject;
         BackHomeButton = EditHousePanel.transform.FindChild("BackHomeButton").GetComponent<Button>();
-		BackHomeButton.onClick.AddListener(BackHome);
         EditwindToggle = EditPanel.transform.FindChild("EditwindToggle").GetComponent<Toggle>();
         EditEnviromentToggle = EditPanel.transform.FindChild("EditEnviromentToggle").GetComponent<Toggle>();
         HouseMapToggle = EditHousePanel.transform.FindChild("HouseMapToggle").GetComponent<Toggle>();
@@ -93,7 +108,7 @@ public class UIVRpage : TTUIPage {
 		BodyToggle.isOn = false;
 		windmToggle.isOn = false;
 		WindshaToggle.isOn = false;
-		changestylepanel.SetActive (false);
+		//changestylepanel.SetActive (false);
         GroundToggle.isOn = false;
         WallToggle.isOn = false;
         BedroomToggle.isOn = true;
@@ -101,6 +116,9 @@ public class UIVRpage : TTUIPage {
         EditEnviromentToggle.isOn = false;
         EditwindToggle.isOn = true;
         firstitems.SetActive(false);
+		changestylepanel.transform.localScale = Vector3.zero;
+		VRHouseMap.transform.localScale = Vector3.zero;
+		VRUploadPage.transform.localScale = Vector3.zero;
 	}
 
     void ToBedroom(bool ison) 
@@ -130,9 +148,7 @@ public class UIVRpage : TTUIPage {
     /// </summary>
      void BackHome() 
      {
-
          ShowPage<UIHomePanel>();
-
      }
 
      public override void Refresh()
@@ -189,35 +205,33 @@ public class UIVRpage : TTUIPage {
     void RoateSelf(bool ison) 
     {
         aspecktToggle.transform.Rotate(0, 0, 180);
+		ScaleBorn (AlivePanel.transform, ison);
+		if (isChangStyelBig && !ison)
+		{
+			ScaleBorn (changestylepanel.transform, ison);
+			RevertToggles ();
+		}
 
-        if (ison)
-        {
-          //  bottomPanel.gameObject.SetActive(true);
-            AlivePanel.transform.DOScale(Vector3.one, 0.2f);
-        }
-        else
-        {
-            AlivePanel.transform.DOScale(Vector3.zero, 0.2f);
-            changestylepanel.SetActive(false);
-            //bottomPanel.DOScale(Vector3.zero, 0.2f);
-
-        }
     }
-
+	void RevertToggles()
+	{
+		for (int i = 0; i < toggles.Count; i++)
+		{
+			toggles [i].isOn = false;
+		}
+	}
 
     /// <summary>
     /// 上传
     /// </summary>
      void Upload( bool ison) 
      {
-         if (!VRUploadPage.activeSelf)
-         {
-             VRUploadPage.SetActive(true);
-             VRHouseMap.SetActive(false);
-         }
-         else {
-             VRUploadPage.SetActive(false);
-         }
+		ScaleBorn (VRUploadPage.transform, ison);
+		if (ison) 
+		{
+			HouseMapToggle.isOn = !ison;
+		}
+	//	HouseMapToggle.isOn = !ison;
      }
 
     /// <summary>
@@ -225,14 +239,11 @@ public class UIVRpage : TTUIPage {
     /// </summary>
      void HouseMap( bool ison) 
      {
-         if (!VRHouseMap.activeSelf)
-         {
-             VRHouseMap.SetActive(true);
-             VRUploadPage.SetActive(false);
-         }
-         else {
-             VRHouseMap.SetActive(false);
-         }
+		ScaleBorn (VRHouseMap.transform, ison);
+		if (ison) 
+		{
+			UploadToggle.isOn = !ison;
+		}
 
      }
     
@@ -241,32 +252,40 @@ public class UIVRpage : TTUIPage {
     /// </summary>
      void ChangStyel(bool ison) 
      {
-         //Debug.Log("ison"+ison);
-        //changestylepanel.SetActive (ison);
-        //if (ison)
-        //{
-        //    changestylepanel.transform.DOScale(Vector3.one, 0.2f);
-        //}
+		ScaleBorn (changestylepanel.transform, ison);
          if (ison)
          {
-             changestylepanel.transform.DOScale(Vector3.one, 0.2f);
              leftname.text = UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.GetComponentInChildren<Text>().text;
              replacename.text = "款式";
          }
-         else {
-             changestylepanel.transform.DOScale(Vector3.zero, 0.2f);
-         }
+       
      }
 
      void LivingroomChangeStyel(bool ison) 
      {
-         changestylepanel.SetActive(ison);
+		ScaleBorn (changestylepanel.transform,ison);
          if (ison)
          {
              replacename.text = UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.GetComponentInChildren<Text>().text;
              leftname.text = "替换";
          }
      }
-   
+	void ScaleBorn(Transform tr,bool b)
+	{
+		if (b) {
+			tr.DOScale (Vector3.one, 0.2f);
+		} else 
+		{
+			tr.DOScale (Vector3.zero, 0.2f);
+		}
+		if (tr.Equals(changestylepanel.transform)) 
+		{
+			if (b) {
+				isChangStyelBig = true;
+			} else {
+				isChangStyelBig = false;
+			}
+		}
+	}
 
 }

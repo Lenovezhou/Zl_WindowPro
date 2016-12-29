@@ -187,14 +187,11 @@ public class UIMypro : TTUIPage {
 
     void ShowSingle() 
     {
-       // if (UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.CompareTag("ImageShow"))
-       
-            //跳转并关闭当前
         UpPanel.SetActive(false);
         DownPanel.SetActive(false);
         ProShowPanel.SetActive(true);
-        singleshowimag.overrideSprite = UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.GetComponent<Image>().overrideSprite;
-     //  UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.CompareTag("ImageShow")
+        singleshowimag.overrideSprite 
+		= UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.GetComponent<Image>().overrideSprite;
     }
 
     void Reback() 
