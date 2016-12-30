@@ -13,7 +13,7 @@ public class GameMain : MonoBehaviour
         //GameObject.FindGameObjectWithTag("MainCamera").SetActive(false);
         TTUIRoot tt= TTUIRoot.Instance;
         TTUIPage.ShowPage<UILoginPanel>();
-        //TTUIPage.ShowPage<UIVRpage>();
+		TTUIPage.ShowPage<UILeftChoise>();
         //TTUIPage.ShowPage<UIMypro>();
     }
 

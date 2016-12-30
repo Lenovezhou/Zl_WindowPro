@@ -35,5 +35,6 @@ public class UILoginPanel : TTUIPage
 
         //登录到主界面
         ShowPage<UIHomePanel>();
+		TTUIPage.allPages ["UILeftChoise"].Hide ();
     }
 }

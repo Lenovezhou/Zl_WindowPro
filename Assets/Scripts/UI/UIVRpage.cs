@@ -18,8 +18,8 @@ public class UIVRpage : TTUIPage {
 
     Text leftname,replacename;
     Toggle HoleToggle, BodyToggle, windmToggle, WindshaToggle, HouseMapToggle, UploadToggle, aspecktToggle, GroundToggle, WallToggle
-      , BedroomToggle, LivingroomToggle, EditwindToggle, EditEnviromentToggle;
-    Button BackHomeButton, BackButton, ConfigButton;
+      , BedroomToggle, LivingroomToggle;
+	Button BackHomeButton, BackButton, ConfigButton, EditwindButton, EditEnviromentButton;
     GameObject secenditemes,firstitems ,changestylepanel, VRUploadPage, VRHouseMap, EditWindPanel
         , EditEnviroPanel, EditPanel, VRChangeStyel, EditHousePanel, ChoiseHousePanel, AlivePanel;
      public override void Awake(GameObject go) 
@@ -36,8 +36,12 @@ public class UIVRpage : TTUIPage {
          LivingroomToggle.onValueChanged.AddListener(ToLivingroom);
          GroundToggle.onValueChanged.AddListener(LivingroomChangeStyel);
          WallToggle.onValueChanged.AddListener(LivingroomChangeStyel);
-         EditwindToggle.onValueChanged.AddListener(EditFlywindows);
-         EditEnviromentToggle.onValueChanged.AddListener(EditEnvir);
+		EditwindButton.onClick.AddListener (delegate() {
+			EditButtonCall(EditwindButton,EditWindPanel);});
+		EditEnviromentButton.onClick.AddListener (delegate() {
+			EditButtonCall(EditEnviromentButton,EditEnviroPanel);});
+//         EditwindToggle.onValueChanged.AddListener(EditFlywindows);
+//         EditEnviromentToggle.onValueChanged.AddListener(EditEnvir);
          aspecktToggle.onValueChanged.AddListener(RoateSelf);
          BackHomeButton.onClick.AddListener(BackHome);
          BackButton.onClick.AddListener(BackHome);
@@ -83,8 +87,8 @@ public class UIVRpage : TTUIPage {
 		secenditemes = changestylepanel.transform.FindChild ("Scroll View/Viewport/Content/ChoiseHouseItem").gameObject;
         firstitems = ChoiseHousePanel.transform.FindChild("MainPanel/Scroll View/Viewport/Content/HouseLitItems").gameObject;
         BackHomeButton = EditHousePanel.transform.FindChild("BackHomeButton").GetComponent<Button>();
-        EditwindToggle = EditPanel.transform.FindChild("EditwindToggle").GetComponent<Toggle>();
-        EditEnviromentToggle = EditPanel.transform.FindChild("EditEnviromentToggle").GetComponent<Toggle>();
+		EditwindButton = EditPanel.transform.FindChild("EditwindButton").GetComponent<Button>();
+		EditEnviromentButton = EditPanel.transform.FindChild("EditEnviromentButton").GetComponent<Button>();
         HouseMapToggle = EditHousePanel.transform.FindChild("HouseMapToggle").GetComponent<Toggle>();
         EditWindPanel = AlivePanel.transform.FindChild("EditWindPanel").gameObject;
         EditEnviroPanel = AlivePanel.transform.FindChild("EditEnviroPanel").gameObject;
@@ -105,8 +109,8 @@ public class UIVRpage : TTUIPage {
         WallToggle.isOn = false;
         BedroomToggle.isOn = true;
         LivingroomToggle.isOn = false;
-        EditEnviromentToggle.isOn = false;
-        EditwindToggle.isOn = true;
+//		EditEnviromentButton.GetComponent<Image>().color = color
+		EditwindButton.GetComponent<Image>().color = new Color(0.05f, 0.68f, 0.68f);
         firstitems.SetActive(false);
 	}
 
@@ -115,19 +119,22 @@ public class UIVRpage : TTUIPage {
      //   LivingroomPanel.SetActive(!ison);
     }
 
-    void EditFlywindows(bool ison) 
+	void EditButtonCall(Button b,GameObject go) 
     {
-        EditWindPanel.SetActive(ison);
-        EditEnviroPanel.SetActive(!ison);
-        EditEnviromentToggle.isOn = !ison;
+		Button nb = b == EditEnviromentButton ? EditwindButton : EditEnviromentButton;
+		GameObject ngo = go == EditEnviroPanel ? EditWindPanel : EditEnviroPanel;
+		b.GetComponent<Image> ().color = new Color (0.05f, 0.68f, 0.68f);
+		nb.GetComponent<Image> ().color = Color.white;
+		go.gameObject.SetActive(true);
+		ngo.gameObject.SetActive(false);
+     //   EditEnviromentToggle.isOn = !ison;
     }
-    void EditEnvir(bool ison) 
-    {
-        EditEnviroPanel.SetActive(ison);
-        EditWindPanel.SetActive(!ison);
-        EditwindToggle.isOn = !ison;
-    }
-
+//    void EditEnvir() 
+//    {
+//        EditEnviroPanel.SetActive(ison);
+//        EditWindPanel.SetActive(!ison);
+//    //    EditwindToggle.isOn = !ison;
+//    }
     void ToLivingroom(bool ison) 
     {
    //     BedroomPanel.SetActive(!ison);
@@ -281,11 +288,13 @@ public class UIVRpage : TTUIPage {
              tr.gameObject.SetActive(candoscale);
              //tr.transform.DOScale(Vector3.one, 0.2f);
              tr.DOLocalMoveY(0, 0.2f);
+//			tr.DOScaleY (1, 0.2f);
          }
          else 
          {
-             //tr.transform.DOScale(Vector3.zero, 0.2f);
+
              tr.DOLocalMoveY(-200, 0.2f);
+//			tr.DOScaleY(0,0.2f);
          }
         
      }
